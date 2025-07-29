@@ -24,20 +24,25 @@ yield_strength = 250  # MPa
 # Calculations
 load_n = load_kg * g
 dyn_load = load_n * daf
-w = dyn_load / fork_spacing
+w = dyn_load / fork_spacing  # N/mm (uniformly distributed load)
 
-# Section modulus Zx
-Z = ((width * height*2) - ((width - 2*thickness)(height - 2*thickness)**2)) / (6 * height)
-M = (w * fork_spacing**2) / 8
-stress = M / Z
+# Section Modulus Zx (for rectangular hollow section)
+# Z = (B*H^3 - (B-2t)*(H-2t)^3) / (6*H)
+Z = ((width * height**2) - ((width - 2 * thickness) * (height - 2 * thickness)**2)) / (6 * height)
+
+# Bending Moment (max for simply supported beam with UDL)
+M = (w * fork_spacing**2) / 8  # N.mm
+
+# Bending Stress
+stress = M / Z  # MPa
 
 # Result section
 st.markdown("### 📊 Output")
-st.write(f"*Dynamic Load (N):* {dyn_load:.2f}")
-st.write(f"*Bending Moment (N·mm):* {M:.2f}")
-st.write(f"*Section Modulus (Zx in mm³):* {Z:.2f}")
-st.write(f"*Calculated Bending Stress:* {stress:.2f} MPa")
-st.write(f"*Yield Strength of Steel:* {yield_strength} MPa")
+st.write(f"**Dynamic Load (N):** {dyn_load:.2f}")
+st.write(f"**Bending Moment (N·mm):** {M:.2f}")
+st.write(f"**Section Modulus (Zx in mm³):** {Z:.2f}")
+st.write(f"**Calculated Bending Stress:** {stress:.2f} MPa")
+st.write(f"**Yield Strength of Steel:** {yield_strength} MPa")
 
 result = "✅ SAFE under dynamic load." if stress < yield_strength else "❌ NOT SAFE. Redesign required."
 st.success(result) if stress < yield_strength else st.error(result)
@@ -72,7 +77,7 @@ def create_pdf():
     pdf.cell(200, 10, txt=f"Yield Strength: {yield_strength} MPa", ln=True)
     pdf.cell(200, 10, txt=f"Result: {result}", ln=True)
 
-    # Convert PDF to bytes
+    # Convert PDF to BytesIO object
     pdf_bytes = io.BytesIO()
     pdf.output(pdf_bytes)
     pdf_bytes.seek(0)
