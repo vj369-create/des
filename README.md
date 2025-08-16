@@ -1,17 +1,19 @@
-# Desander Dashboard (Streamlit PWA)
+# Industrial Monitoring Dashboard — PWA (v2)
 
-Installable Streamlit dashboard using Matplotlib/Seaborn, packaged as a Progressive Web App.
+Flask PWA with **file upload** and **date picker**.
 
-## Quickstart (Python 3.12 recommended)
+## Run locally
+
 ```bash
-python3.12 -m venv venv
-venv\Scripts\activate        # Windows
-# or: source venv/bin/activate # macOS/Linux
 pip install -r requirements.txt
-streamlit run app.py
+python app.py
 ```
-Open `http://localhost:8501` then use **Install app** (Chrome/Edge) or **Add to Home Screen** on mobile.
 
-### Notes
-- `manifest.json` and `service-worker.js` are registered from the app root.
-- If you serve behind a subpath, adjust the SW registration path in `app.py`.
+Open http://localhost:8080
+
+### Use cases
+- **Upload route**: choose your `.xlsx` and a date (`YYYY-MM-DD`). The image renders inline on the page.
+- **Server file route (optional)**: place `f.xlsx` beside `app.py` and hit `/dashboard?date=dd-mm-yyyy` or use the classic link on the homepage.
+
+## Deploy
+Any Python host (Render, Railway, Azure App Service, EC2). Ensure `static/` and `templates/` directories are served and that service worker paths match.
